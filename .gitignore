@@ -1,2 +1,8 @@
-autoatendimento
-api-autoatendimento
+autoatendimento/
+api-autoatendimento/
+banco/
+dados_do_banco.env
+dados_do_client.env
+dados_da_api.env
+*.swp
+package-lock.json

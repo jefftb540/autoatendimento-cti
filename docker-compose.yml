@@ -1,53 +1,41 @@
 version: "3"
-
 services:
   db:
     image: mariadb
     command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: autoatendimento
-      MYSQL_USER: ifrn
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_HOST: '%'
-    ports:
-      - "3306:3306"
+    env_file: dados_do_banco.env
     networks:
-      - autoatendimento
+      banco:
+        aliases:
+          - db
     volumes:
-      - db_data:/var/lib/mysql
-
+      - ./banco:/var/lib/mysql
 
   api:
-    build:
-      context: ./api-autoatendimento
-      dockerfile: Dockerfile
-    working_dir: /src
-
+    image: node
+    working_dir: /home/node/app
     depends_on:
       - db
-        
     ports:
       - "3001:3001"
     networks:
-      - autoatendimento
+      - banco
+    command: bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; sleep 1; node app.js'
     volumes:
-      - ./api:/app
+      - ./api-autoatendimento:/home/node/app
+    env_file: dados_da_api.env
 
   client:
-    build:
-      context: ./autoatendimento
-      dockerfile: Dockerfile
+    image: node
+    working_dir: /home/node/app
+    env_file: dados_do_client.env
     depends_on:
       - api
+    command: bash -c 'node app.js'
     ports:
       - "3000:80"
-    networks:
-      - autoatendimento
+    volumes:
+      - ./autoatendimento:/home/node/app
 
 networks:
-  autoatendimento:
-    name: autoatendimento
-volumes:
-  db_data:
+  banco:
