@@ -1,15 +1,15 @@
 #check if docker compose or docker-compose
-DOCKER_COMPOSE:=$(shell which docker-compose || echo 'docker compose')
+DOCKER_COMPOSE:="$(shell which docker-compose || echo 'docker compose')"
 DOCKER_COMPOSE_API:=$(DOCKER_COMPOSE) run api 
 DOCKER_COMPOSE_CLIENT:=$(DOCKER_COMPOSE) run client
-AUTOATENDIMENTO_GITHUB_URL:=git@github.com:jefftb540/autoatendimento.git
-API_GITHUB_URL:=git@github.com:jefftb540/api-autoatendimento.git
+AUTOATENDIMENTO_GITHUB_URL:=https://github.com/jefftb540/autoatendimento.git
+API_GITHUB_URL:=https://github.com/jefftb540/api-autoatendimento.git
 
 .PHONY: run-all
 run-all: download install-packages migrations run
 
 .PHONY: start-all
-start-all: install-packages migrations start
+start-all: download install-packages migrations start
 
 .PHONY: download
 download:
