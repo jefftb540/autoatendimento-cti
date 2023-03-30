@@ -19,23 +19,21 @@ services:
     ports:
       - "3001:3001"
     networks:
-      - banco
+      banco:
     command: bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; sleep 1; npx nodemon src/server.js'
     volumes:
       - ./api-autoatendimento:/home/node/app
     env_file: dados_da_api.env
+    environment:
+      - SERVER_PORT=3001
 
   client:
-    image: node
-    working_dir: /home/node/app
+    build: ./client-docker
     env_file: dados_do_client.env
     depends_on:
       - api
-    command: bash -c 'npm start'
     ports:
-      - "3000:3000"
-    volumes:
-      - ./autoatendimento:/home/node/app
+      - "3000:80"
 
 networks:
   banco:
