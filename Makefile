@@ -13,13 +13,11 @@ start-all: download install-packages migrations start
 
 .PHONY: download
 download:
-	git clone $(AUTOATENDIMENTO_GITHUB_URL)
-	git clone $(API_GITHUB_URL)
+	test -d api-autoatendimento || git clone $(API_GITHUB_URL)
 
 .PHONY: install-packages
 install-packages:
 	$(DOCKER_COMPOSE_API) npm install
-	$(DOCKER_COMPOSE_CLIENT) npm install
 
 .PHONY: migrations
 migrations:
@@ -38,7 +36,15 @@ stop:
 start:
 	$(DOCKER_COMPOSE) up
 
-.PHONE: clean-git
+.PHONY: rebuild-client
+rebuild-client:
+	$(DOCKER_COMPOSE) build --no-cache
+
+.PHONY: clean-git
 clean-git:
-	@rm -rf autoatendimento
-	@rm -rf api-autoatendimento
+	@rm -rf autoatendimento/
+	@rm -rf api-autoatendimento/
+
+.PHONY: clean-db-dev-environment
+clean-db-dev-environment:
+	@rm -rf banco/
